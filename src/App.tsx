@@ -1,5 +1,5 @@
 import "./App.css";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 const fruits = [
   "Abiu",
@@ -136,9 +136,13 @@ const fruits = [
   "Yuzu",
 ];
 
-async function getAutocompleteResults(query: string): Promise<string[]> {
-  return new Promise((resolve) => {
+async function getAutocompleteResults(query: string, signal?: AbortSignal): Promise<string[]> {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
+      // if the request was aborted after it was started, `reject`
+      if (signal?.aborted) {
+        reject(signal.reason);
+      }
       resolve(fruits.filter((fruit) => fruit.toLowerCase().includes(query.toLowerCase())));
     }, Math.random() * 1000);
   });
@@ -157,28 +161,38 @@ function debounce<F extends Fn>(f: F, delay: number): F {
   } as F;
 }
 
-function App() {
+const MySolution: React.FC = () => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const cb = useCallback(
     debounce((query: string) => {
       console.log("Called:", query);
       if (!query) {
+        setIsLoading(false);
+        setResults([]);
         return;
       }
-      getAutocompleteResults(query).then((r) => setResults(r));
-    }, 1000),
+      getAutocompleteResults(query).then((r) => {
+        setResults(r);
+        setIsLoading(false);
+      });
+    }, 250),
     [setResults],
   );
 
   useEffect(() => {
+    setIsLoading(true);
     cb(query);
   }, [query]);
 
   return (
-    <div className="App">
-      <input onChange={(e) => setQuery(e.target.value)} />
+    <div>
+      <div>
+        <input onChange={(e) => setQuery(e.target.value)} />
+        {isLoading && <span>Loading...</span>}
+      </div>
       <div>
         {results.map((fruit) => (
           <div key={fruit}>{fruit}</div>
@@ -186,6 +200,65 @@ function App() {
       </div>
     </div>
   );
+};
+
+function useDebouncedValue(value: string, delay = 250) {
+  const [debounceValue, setDebounceValue] = useState(value);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebounceValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [value, setDebounceValue, delay]);
+
+  return debounceValue;
 }
+
+const MewtruSolution: React.FC = () => {
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const debouncedQuery = useDebouncedValue(query);
+  const controller = new AbortController();
+
+  useEffect(() => {
+    const { signal } = controller;
+    (async () => {
+      setSuggestions([]);
+      if (debouncedQuery.length > 0) {
+        console.log(debouncedQuery);
+        const data = await getAutocompleteResults(debouncedQuery, signal);
+        setSuggestions(data);
+      }
+    })();
+
+    // when the effect re-runs or the component is unmounted, we cancel the pending request:
+    // - in case component is unmounted, we no longer care about the result
+    // - when effect re-runs (`debouncedQuery` is updated), then we want to fire a new request to the server
+    return () => {
+      controller.abort("cancel request");
+    };
+  }, [debouncedQuery]);
+  return (
+    <div>
+      <input onChange={(e) => setQuery(e.target.value)} />
+      <div>
+        {suggestions.map((fruit) => (
+          <div key={fruit}>{fruit}</div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const App: React.FC = () => (
+  <main>
+    <MySolution />
+    <MewtruSolution />
+  </main>
+);
 
 export default App;

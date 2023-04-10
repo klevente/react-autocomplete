@@ -4,3 +4,9 @@
   padding: 2rem;
   text-align: center;
 }
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+}
