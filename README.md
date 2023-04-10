@@ -1,6 +1,6 @@
 # react-autocomplete
 
-Example React Autocomplete Component with debouncing and `AbortController`.
+Example React Autocomplete Component with debouncing and `AbortController`, based on this [video](https://www.youtube.com/watch?v=Ju6VSLKXrJg).
 
 # Improvements, follow-ups:
 - How do I handle the loading state? (I did this)
