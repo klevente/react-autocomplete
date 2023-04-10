@@ -1,35 +1,155 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+async function getAutocompleteResults(query: string): Promise<string[]> {
+  const fruits = [
+    "Abiu",
+    "Acaí",
+    "Acerola",
+    "Akebi",
+    "Ackee",
+    "African Cherry Orange",
+    "American Mayapple",
+    "Apple",
+    "Apricot",
+    "Araza",
+    "Avocado",
+    "Banana",
+    "Bilberry",
+    "Blackberry",
+    "Blackcurrant",
+    "Black sapote",
+    "Blueberry",
+    "Boysenberry",
+    "Breadfruit",
+    "Buddha's hand",
+    "Cactus pear",
+    "Canistelt",
+    "Cempedak",
+    "Cherimoya",
+    "Cherry",
+    "Chico fruit",
+    "Cloudberry",
+    "Coco de mer",
+    "Coconut",
+    "Crab apple",
+    "Cranberry",
+    "Currant",
+    "Damson",
+    "Date",
+    "Dragonfruit",
+    "Durian",
+    "Elderberry",
+    "Feijoa",
+    "Fig",
+    "Finger Lime",
+    "Goji berry",
+    "Gooseberry",
+    "Grape",
+    "Raisin",
+    "Grapefruit",
+    "Grewia asiatica",
+    "Guava",
+    "Hala Fruit",
+    "Honeyberry",
+    "Huckleberry",
+    "Jabuticaba",
+    "Jackfruit",
+    "Jambul",
+    "Japanese plum",
+    "Jostaberry",
+    "Jujube",
+    "Juniper berry",
+    "Kaffir Lime",
+    "Kiwano",
+    "Kiwifruit",
+    "Kumquat",
+    "Lemon",
+    "Lime",
+    "Loganberry",
+    "Longan",
+    "Loquat",
+    "Lulo",
+    "Lychee",
+    "Magellan Barberry",
+    "Mamey Apple",
+    "Mamey Sapote",
+    "Mango",
+    "Mangosteen",
+    "Marionberry",
+    "Melon",
+    "Cantaloupe",
+    "Galia melon",
+    "Honeydew",
+    "Mouse melon",
+    "Musk melon",
+    "Watermelon",
+    "Miracle fruit",
+    "Momordica fruit",
+    "Monstera deliciosa",
+    "Mulberry",
+    "Nance",
+    "Nectarine",
+    "Orange",
+    "Blood orange",
+    "Clementine",
+    "Mandarine",
+    "Tangerine",
+    "Papaya",
+    "Passionfruit",
+    "Pawpaw",
+    "Peach",
+    "Pear",
+    "Persimmon",
+    "Plantain",
+    "Plum",
+    "Prune",
+    "Pineapple",
+    "Pineberry",
+    "Plumcot",
+    "Pomegranate",
+    "Pomelo",
+    "Purple mangosteen",
+    "Quince",
+    "Raspberry",
+    "Salmonberry",
+    "Rambutan",
+    "Redcurrant",
+    "Rose apple",
+    "Salal berry",
+    "Salak",
+    "Sapodilla",
+    "Sapote",
+    "Satsuma",
+    "Soursop",
+    "Star apple",
+    "Star fruit",
+    "Strawberry",
+    "Surinam cherry",
+    "Tamarillo",
+    "Tamarind",
+    "Tangelo",
+    "Tayberry",
+    "Ugli fruit",
+    "White currant",
+    "White sapote",
+    "Ximenia",
+    "Yuzu",
+  ];
 
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(fruits.filter((fruit) => fruit.toLowerCase().includes(query.toLowerCase())));
+    }, Math.random() * 1000);
+  });
 }
 
-export default App
+function App() {
+  return (
+    <div className="App">
+      <input />
+      <div>Show results here</div>
+    </div>
+  );
+}
+
+export default App;
